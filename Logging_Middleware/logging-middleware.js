@@ -19,7 +19,6 @@ const backendPackages = [
   "route",
   "service",
 ];
-const frontendPackages = ["api"];
 
 export async function Log(stack, level, pkg, message) {
   try {
@@ -32,13 +31,10 @@ export async function Log(stack, level, pkg, message) {
     if (stack === "backend" && !backendPackages.includes(pkg)) {
       throw new Error(`Invalid backend package: ${pkg}`);
     }
-    if (stack === "frontend" && !frontendPackages.includes(pkg)) {
-      throw new Error(`Invalid frontend package: ${pkg}`);
-    }
 
     const payload = { stack, level, package: pkg, message };
 
-    const response = await axios.post(LOG_API_URL, payload, {
+    const response = await axios.post(LOG_API_URL, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${BEARER_TOKEN}`,
@@ -46,9 +42,9 @@ export async function Log(stack, level, pkg, message) {
     });
 
     console.log("Log sent:", response.data);
-    return response.data;
+    
   } catch (error) {
     console.error("Logging error:", error.message);
-    return { error: error.message };
+    
   }
 }
